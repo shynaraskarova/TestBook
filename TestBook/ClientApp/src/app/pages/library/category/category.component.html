@@ -1,0 +1,43 @@
+<nz-table #basicTable nzBordered [nzData]="listOfData" [nzScroll]="{ x: '600px' }">
+  <thead>
+  <tr>
+    <th nzWidth="7%"><a (click)="showModal(undefined)"><i nz-icon nzType="plus" nzTheme="outline"></i></a></th>
+    <th nzWidth="93%">Наименование</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let data of basicTable.data">
+    <td>
+        <span>
+          <a (click)="showModal(data)"><i nz-icon nzType="edit" nzTheme="outline"></i></a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a (click)="deleteItem(data['id'])"><i nz-icon nzType="delete" nzTheme="outline"></i></a>
+        </span>
+    </td>
+    <td>{{ data['name']}}</td>
+  </tr>
+  </tbody>
+</nz-table>
+<nz-modal [(nzVisible)]="isVisible"
+          [nzTitle]="modalTitle"
+          [nzFooter]="modalFooter"
+          (nzOnCancel)="handleCancel()">
+  <ng-template #modalTitle>
+    <div *ngIf="isNew">Добавить</div>
+    <div *ngIf="!isNew">Изменить</div>
+  </ng-template>
+  <form nz-form [formGroup]="dataEditForm">
+    <nz-form-item>
+      <nz-form-label nzRequired>Наименование</nz-form-label>
+      <nz-form-control>
+        <input nz-input formControlName="name" required/>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+  <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="handleCancel()">Отменить</button>
+    <button nz-button nzType="primary" (click)="handleSave(dataEditForm.value)" [disabled]="!dataEditForm.valid">Сохранить</button>
+  </ng-template>
+</nz-modal>
+<app-spin [isSpinning]="loading"></app-spin>
+

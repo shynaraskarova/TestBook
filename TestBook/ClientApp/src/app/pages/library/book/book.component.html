@@ -1,0 +1,96 @@
+<nz-table #basicTable nzBordered [nzData]="listOfDisplayData" [nzScroll]="{ x: '600px' }">
+  <thead>
+  <tr>
+    <th nzWidth="7%"><a (click)="showModal(undefined)"><i nz-icon nzType="plus" nzTheme="outline"></i></a></th>
+    <th nzWidth="31%" nzCustomFilter>Наименование<i
+      class="ant-table-filter-icon"
+      nz-icon
+      nz-dropdown
+      #dropdown="nzDropdown"
+      nzType="search"
+      [nzDropdownMenu]="menu"
+      [class.ant-table-filter-open]="dropdown.nzVisible"
+      nzTrigger="click"
+      nzPlacement="bottomRight"
+      [nzClickHide]="false"
+      nzTableFilter
+    ></i>
+    </th>
+    <th nzWidth="31%">Год</th>
+    <th nzWidth="31%">Категория</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let data of basicTable.data">
+    <td>
+        <span>
+          <a (click)="showModal(data)"><i nz-icon nzType="edit" nzTheme="outline"></i></a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a (click)="deleteItem(data['id'])"><i nz-icon nzType="delete" nzTheme="outline"></i></a>
+        </span>
+    </td>
+    <td>{{ data['name']}}</td>
+    <td>{{ data['year']}}</td>
+    <td>{{ data['category']['name']}}</td>
+  </tr>
+  </tbody>
+</nz-table>
+<nz-dropdown-menu #menu="nzDropdownMenu">
+  <div class="search-box">
+    <input type="text" nz-input placeholder="Название" [(ngModel)]="searchValue" />
+    <button nz-button nzSize="small" nzType="primary" (click)="search()" class="search-button">
+      Поиск
+    </button>
+    <button nz-button nzSize="small" (click)="reset()">Отмена</button>
+  </div>
+</nz-dropdown-menu>
+<nz-modal [(nzVisible)]="isVisible"
+          [nzTitle]="modalTitle"
+          [nzFooter]="modalFooter"
+          (nzOnCancel)="handleCancel()">
+  <ng-template #modalTitle>
+    <div *ngIf="isNew">Добавить</div>
+    <div *ngIf="!isNew">Изменить</div>
+  </ng-template>
+  <form nz-form [formGroup]="dataEditForm">
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Наименование</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="name" required/>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Год</nz-form-label>
+          <nz-form-control>
+            <input nz-input  formControlName="year" required/>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label>Категория</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="category_id" nzShowSearch>
+              <nz-option *ngFor="let option of categoriesList"
+                         [nzLabel]="option['name']"
+                         [nzValue]="option['id']">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+  <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="handleCancel()">Отменить</button>
+    <button nz-button nzType="primary" (click)="handleSave(dataEditForm.value)" [disabled]="!dataEditForm.valid">Сохранить</button>
+  </ng-template>
+</nz-modal>
+<app-spin [isSpinning]="loading"></app-spin>
+
